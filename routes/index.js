@@ -27,9 +27,10 @@ res.send(books);
 });
 
 router.get('/libro/:id', async (req,res) => {
- // console.log('la ruta trajo: ' + req.params.id);
+ // console.log(req.params.id);
   const book = await api.getBookById(req.params.id);
-  res.send(book);
+
+  res.render('pages/libro', { book });
 });
 
 module.exports = router;
