@@ -1,3 +1,5 @@
+const { Op } = require("sequelize");
+
 //traer la DB
 const db = require('../models');
 
@@ -14,6 +16,12 @@ const getBooks = async () => {
 
 }
 
+const getAuthors = async () => {
+    //SELECT * FROM autor
+const authors = await db.autor.findAll().then(result => {return result;
+});
+return authors;
+}
 const getBookById = async (id) => {
     console.log('-*-*-*-*-*-*-*-*-*-');
     console.log('El ID que llegó a /api es' + id);
@@ -29,10 +37,46 @@ const getBookById = async (id) => {
     return book;
 }
 
+const searchByTitle = async (titulo) =>{
+    // Op.substring toma una cadena y le agrega %
+    //SELECT * FROM libros
+    //WHERE 
+    const results = await db.libro.findAll({
+ where: {
+     titulo:{
+        [Op.substring]: titulo
+   }
+  },
+    include: db.autor
+    }).then(result => {
+       return result;
+    });
+
+return results;
+}
+
+const addBook = async (titulo, precio, portada, autorId) => {
+    //Acá vamos a agregar un libro
+console.log('Llegó: ', titulo, precio, portada, autorId);
+
+//Tengo que armar el INSERT INTO libro ...
+const newBook = await db.libro.create ({
+    titulo: titulo,
+    precio: precio,
+    portada: portada,
+    autorIdAutor: autorId
+});
+
+return newBook;
+}
+
 //Exportamos las funciones
 module.exports = {
 getBooks,
-getBookById
+getAuthors,
+getBookById,
+searchByTitle,
+addBook
 }
 
 

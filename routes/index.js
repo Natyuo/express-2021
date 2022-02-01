@@ -1,4 +1,5 @@
 var express = require('express');
+const res = require('express/lib/response');
 var router = express.Router();
 
 //Traigo TODAS las funciones de la API
@@ -7,6 +8,40 @@ const api = require('../api');
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
+});
+
+/* GET /resultados page */
+router.get('/resultados', async (req, res) => {
+  // Conseguir lo que el usuario tipeó en el campo "titulo"
+  
+  // const titulo = req.query.titulo;
+  const { titulo } = req.query;
+
+  //Enviar titulo a la llamada de la API
+  const results = await api.searchByTitle(titulo);
+
+res.send(results);
+});
+
+/*GET agregar page*/
+router.get('/agregar', async (req, res) => {
+  const authors = await api.getAuthors();
+
+  
+
+  //Le envío los autores al ejs
+
+  res.render('pages/agregar', { authors });
+});
+/* POST agregar libro, proceso */
+router.post('/agregar-libro', async (req, res) => {
+  //Levantar los datos del formulario de agregar
+
+console.log(req.body);
+  const { titulo, precio, portada, autor } = req.body;
+  await api.addBook(titulo, precio, portada, autor);
+  
+  res.send('Vas bien!')
 });
 
 /* GET nosotros page. */
